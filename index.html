@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Waste Management Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; }
+    .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
+    label { display: block; margin-top: 12px; }
+    select, input[type="date"] { width: 100%; padding: 8px; margin-top: 4px; }
+    .sensor-data { margin-top: 24px; background: #e9ecef; padding: 16px; border-radius: 6px;}
+    .connect-btn { margin-top: 16px; }
+    .status { color: green; margin-top: 8px;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Waste Management Dashboard</h2>
+    <form id="wasteForm">
+      <label for="location">Location:</label>
+      <select id="location" required>
+        <option value="">Select Location</option>
+        <option>Office</option>
+        <option>College</option>
+        <option>Hostel A</option>
+        <option>Library</option>
+        <option>Hostel B</option>
+      </select>
+
+      <label for="date">Date of Waste Formed:</label>
+      <input type="date" id="date" required>
+
+      <label for="wasteType">Waste Type:</label>
+      <select id="wasteType" required>
+        <option value="">Select Type</option>
+        <option>Biodegradable</option>
+        <option>Non-Biodegradable</option>
+        <option>Mixed</option>
+      </select>
+    </form>
+
+    <button class="connect-btn" id="connectBtn">Connect to Arduino (USB)</button>
+    <div class="status" id="statusMsg"></div>
+
+    <div class="sensor-data">
+      <h3>Real-Time Bin Data</h3>
+      <p><strong>Weight:</strong> <span id="weightVal">--</span> g</p>
+      <p><strong>Bin Level:</strong> <span id="levelVal">--</span> %</p>
+    </div>
+  </div>
+
+  <script>
+    let port, reader;
+    const connectBtn = document.getElementById('connectBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const weightVal = document.getElementById('weightVal');
+    const levelVal = document.getElementById('levelVal');
+
+    connectBtn.onclick = async () => {
+      try {
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 9600 });
+        statusMsg.textContent = 'Connected to Arduino!';
+        listenToSerial();
+      } catch (err) {
+        statusMsg.textContent = 'Connection failed: ' + err;
+        statusMsg.style.color = 'red';
+      }
+    };
+
+    async function listenToSerial() {
+      const decoder = new TextDecoderStream();
+      const inputDone = port.readable.pipeTo(decoder.writable);
+      reader = decoder.readable.getReader();
+
+      try {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          if (value) parseSerialData(value);
+        }
+      } catch (err) {
+        statusMsg.textContent = 'Serial error: ' + err;
+      } finally {
+        reader.releaseLock();
+      }
+    }
+
+    function parseSerialData(data) {
+      // Expecting data like: "weight:1234;level:78"
+      const match = data.match(/weight:(\d+);level:(\d+)/);
+      if (match) {
+        weightVal.textContent = match[1];
+        levelVal.textContent = match[2];
+      }
+    }
+  </script>
+</body>
+</html>
