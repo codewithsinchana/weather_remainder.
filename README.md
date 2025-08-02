@@ -27,7 +27,7 @@ Weather in Bangalore
 Temperature: 27.3°C
 Condition: Overcast Clouds
 Humidity: 64%
-🔔 Reminder:
-Carry an umbrella, it might rain today! ☔
+Reminder:
+Carry an umbrella, it might rain today!
 Finally push to github ,the python code.
 
