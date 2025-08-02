@@ -26,7 +26,7 @@ def give_reminder(temp, weather, humidity):
     print(f"Condition: {weather}")
     print(f"Humidity: {humidity}%")
 
-    print("\n🔔 Reminders:")
+    print("\n Reminders:")
     if 'rain' in weather.lower():
         print("• It's going to rain. Don't forget your umbrella ")
     if 'clear' in weather.lower():
