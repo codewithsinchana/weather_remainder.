@@ -14,33 +14,35 @@ def get_weather():
             humidity = data['main']['humidity']
             return temp, weather, humidity
         else:
-            print("❌ Error: Failed to fetch weather data. Check your API key or city name.")
+            print("Error: Failed to fetch weather data. Check your API key or city name.")
             return None, None, None
     except Exception as e:
-        print("❌ Exception occurred:", e)
+        print("Exception occurred:", e)
         return None, None, None
 
 def give_reminder(temp, weather, humidity):
-    print(f"\n🌤️ Weather in {CITY}")
+    print(f"\n Weather in {CITY}")
     print(f"Temperature: {temp}°C")
     print(f"Condition: {weather}")
     print(f"Humidity: {humidity}%")
 
     print("\n🔔 Reminders:")
     if 'rain' in weather.lower():
-        print("• It's going to rain. Don't forget your umbrella ☔")
+        print("• It's going to rain. Don't forget your umbrella ")
     if 'clear' in weather.lower():
-        print("• Clear sky! Great time for a walk ☀️")
+        print("• Clear sky! Great time for a walk ")
     if 'cloud' in weather.lower():
-        print("• Overcast day. You may not need sunglasses ☁️")
+        print("• Overcast day. You may not need sunglasses ")
     if temp > 35:
-        print("• It's very hot! Stay hydrated 🥵")
+        print("• It's very hot! Stay hydrated ")
     elif temp < 15:
-        print("• It's cold. Wear warm clothes 🧥")
+        print("• It's cold. Wear warm clothes ")
     if humidity > 80:
-        print("• High humidity. Avoid drying clothes outside 🌫️")
+        print("• High humidity. Avoid drying clothes outside ")
+    elif humidity<80:
+        print("you can dry clothes")
     if all(cond not in weather.lower() for cond in ['rain', 'clear', 'cloud']):
-        print("• Weather looks okay. Have a great day! 😊")
+        print("• Weather looks okay. Have a great day! ")
 
 temp, weather, humidity = get_weather()
 if temp is not None:
